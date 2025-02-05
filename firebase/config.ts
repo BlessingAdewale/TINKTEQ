@@ -1,13 +1,18 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set } from 'firebase/database';
+import { getDatabase } from "firebase/database";
+import Constants from "expo-constants";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDm2fO0RMKNV7ZJaxJ3Re0evr4-f1Dwn6k",
-  authDomain: "tinkteq-8803c.firebaseapp.com",
-  projectId: "tinkteq-8803c",
-  storageBucket: "tinkteq-8803c.firebasestorage.app",
-  messagingSenderId: "437331807782",
-  appId: "1:437331807782:web:fa9483d7aeb7c8d2f6e0e7"
+  apiKey: Constants.expoConfig?.extra?.firebaseApiKey,
+  authDomain: Constants.expoConfig?.extra?.firebaseAuthDomain,
+  projectId: Constants.expoConfig?.extra?.firebaseProjectId,
+  storageBucket: Constants.expoConfig?.extra?.firebaseStorageBucket,
+  messagingSenderId: Constants.expoConfig?.extra?.firebaseMessagingSenderId,
+  appId: Constants.expoConfig?.extra?.firebaseAppId
 };
 
-export default firebaseConfig
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+export { app, database };

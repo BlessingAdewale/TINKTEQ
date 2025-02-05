@@ -3,12 +3,8 @@ import { View, StyleSheet } from "react-native";
 import MapView, { Marker, Region } from "react-native-maps";
 import * as Location from "expo-location";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getDatabase, ref, set } from "firebase/database";
-import { initializeApp } from "firebase/app";
-import firebaseConfig from "@/firebase/config";
-
-const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
+import { database } from "../firebase/config";
+import { ref, set } from "firebase/database";
 
 
 const LiveTracking: React.FC = () => {
