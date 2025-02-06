@@ -132,6 +132,7 @@ const LiveTracking: React.FC = () => {
       <SafeAreaView style={styles.container}>
         <MapView
           style={styles.map}
+          testID="map"
           initialRegion={{
             latitude: location?.latitude || 6.5244,
             longitude: location?.longitude || 3.3792,
@@ -150,6 +151,7 @@ const LiveTracking: React.FC = () => {
           snapPoints={SNAP_POINTS}
           enableDismissOnClose={false}
           animateOnMount={true} // Changed to true for animation
+          style={styles.modalStyle}
         >
           <View style={styles.bottomSheetContent}>
             <Text style={styles.headerText}>Driver's Location</Text>
@@ -195,6 +197,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+
+  modalStyle: {
+    borderTopRightRadius: layout.fontPixel(40),
+    borderTopLeftRadius: layout.fontPixel(40),
+  },
+
   map: {
     width: "100%",
     height: "100%",
