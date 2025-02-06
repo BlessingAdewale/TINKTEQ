@@ -5,20 +5,21 @@ import * as Location from "expo-location";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { database } from "../firebase/config";
 import { ref, set } from "firebase/database";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   BottomSheetModal,
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
 import layout from "@/constants/layout";
 
-const SNAP_POINTS = ["30%", "70%"]; 
+const SNAP_POINTS = ["30%", "70%"];
 
 const LiveTracking: React.FC = () => {
   const [location, setLocation] = useState<Coordinates | null>(null);
   const [prevLocation, setPrevLocation] = useState<Coordinates | null>(null);
   const [driverStatus, setDriverStatus] = useState("On the way");
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const bottomSheetRef = React.useRef<BottomSheetModal>(null);
 
   useEffect(() => {
@@ -44,13 +45,22 @@ const LiveTracking: React.FC = () => {
         longitude: currentLocation.coords.longitude,
       });
 
+      // Store the initial location in AsyncStorage
+      await AsyncStorage.setItem(
+        "driverLocation",
+        JSON.stringify({
+          latitude: currentLocation.coords.latitude,
+          longitude: currentLocation.coords.longitude,
+        })
+      );
+
       locationSubscription = await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.High,
           timeInterval: 5000,
           distanceInterval: 10,
         },
-        (loc) => {
+        async (loc) => {
           if (loc?.coords) {
             const newLocation: Coordinates = {
               latitude: loc.coords.latitude,
@@ -58,11 +68,16 @@ const LiveTracking: React.FC = () => {
             };
             setLocation(newLocation);
             sendLocationToBackend(newLocation);
+
+            // Save the updated location in AsyncStorage
+            await AsyncStorage.setItem(
+              "driverLocation",
+              JSON.stringify(newLocation)
+            );
           }
         }
       );
 
-      // Ensure the BottomSheetModal is presented after the component is mounted
       setTimeout(() => {
         if (bottomSheetRef.current) {
           bottomSheetRef.current.present();
@@ -102,6 +117,9 @@ const LiveTracking: React.FC = () => {
         setLocation(newCoords);
         setPrevLocation(newCoords);
         sendLocationToBackend(newCoords);
+
+        // Save the refreshed location in AsyncStorage
+        await AsyncStorage.setItem("driverLocation", JSON.stringify(newCoords));
       }
     } catch (error) {
       console.error("Error fetching location:", error);
@@ -182,7 +200,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   bottomSheetContent: {
-    marginBottom:layout.pixelSizeVertical(280),
+    marginBottom: layout.pixelSizeVertical(280),
     padding: layout.pixelSizeVertical(20),
     backgroundColor: "#fff",
     height: "100%",
@@ -195,6 +213,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: layout.pixelSizeVertical(12),
   },
   driverStatusText: {
     fontSize: layout.fontPixel(16),
