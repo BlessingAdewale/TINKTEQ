@@ -7,6 +7,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 - **Live Driver Tracking**: The app tracks the driver's location in real-time and displays it on a map. The location is updated every 5 seconds using the device's GPS.
 - **Firebase Integration**: The driver's location data is sent to Firebase Realtime Database for persistence and later access.
+- **Location Persistence with AsyncStorage**: Locations are stored locally on the device using AsyncStorage so that the driver's last known location can persist even after the app is closed or restarted. This ensures that location data is always available and synchronized with the backend.
 - **Bottom Sheet**: A bottom sheet displays real-time information such as driver status, location coordinates, and a refresh button.
 
 ## Get Started
